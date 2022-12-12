@@ -1,7 +1,7 @@
 package core
 
 import (
-	"github.com/NethermindEth/juno/core/felt"
+	"github.com/consensys/gnark-crypto/ecc/stark-curve/fp"
 )
 
 // Class unambiguously defines a [Contract]'s semantics.
@@ -18,8 +18,8 @@ type Class struct {
 	// An ascii-encoded array of builtin names imported by the class.
 	Builtins []string
 	// The starknet_keccak hash of the ".json" file compiler output.
-	ProgramHash *felt.Felt
-	Bytecode    []*felt.Felt
+	ProgramHash *fp.Element
+	Bytecode    []*fp.Element
 }
 
 // Hash computes the [Pedersen Hash] of the class.
@@ -35,15 +35,15 @@ type Contract struct {
 	// Only account contracts can have a non-zero nonce.
 	Nonce uint
 	// Hash of the class that this contract instantiates.
-	ClassHash *felt.Felt
+	ClassHash *fp.Element
 	// Root of the contract's storage trie.
-	StorageRoot *felt.Felt // TODO: is this field necessary?
+	StorageRoot *fp.Element // TODO: is this field necessary?
 }
 
 // EntryPoint uniquely identifies a Cairo function to execute.
 type EntryPoint struct {
 	// starknet_keccak hash of the function signature.
-	Selector *felt.Felt
+	Selector *fp.Element
 	// The offset of the instruction in the class's bytecode.
 	Offset uint
 }
