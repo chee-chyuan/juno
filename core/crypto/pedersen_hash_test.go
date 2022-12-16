@@ -52,8 +52,7 @@ func TestPedersenArray(t *testing.T) {
 		input []string
 		want  string
 	}{
-		// Contract address calculation. See the following links for how the
-		// calculation is carried out and the result referenced.
+		// Contract address calculation. See:
 		//
 		// https://docs.starknet.io/documentation/develop/Contracts/contract-address/
 		// https://alpha4.starknet.io/feeder_gateway/get_transaction?transactionHash=0x1b50380d45ebd70876518203f131a12428b2ac1a3a75f1a74241a4abdd614e8
@@ -74,7 +73,7 @@ func TestPedersenArray(t *testing.T) {
 			// contract_address.
 			want: "0x43c6817e70b3fd99a4f120790b2e82c6843df62b573fdadf9e2d677b60ac5eb",
 		},
-		// Transaction hash calculation. See the following for reference.
+		// Transaction hash calculation. See:
 		//
 		// https://alpha-mainnet.starknet.io/feeder_gateway/get_transaction?transactionHash=e0a2e45a80bb827967e096bcf58874f6c01c191e0a0530624cba66a508ae75.
 		{
@@ -92,12 +91,22 @@ func TestPedersenArray(t *testing.T) {
 			},
 			want: "0xe0a2e45a80bb827967e096bcf58874f6c01c191e0a0530624cba66a508ae75",
 		},
+		// The array hash of an empty slice is defined to be
+		// h(0, 0).
+		{
+			input: make([]string, 0),
+			// The value below was found using the
+			// [fast_pedersen_hash] reference implementation.
+			//
+			// [fast_pedersen_hash]: https://github.com/starkware-libs/cairo-lang/blob/de741b92657f245a50caab99cfaef093152fd8be/src/starkware/crypto/signature/fast_pedersen_hash.py#L34
+			want: "0x49ee3eba8c1600700ee1b87eb599f16716b0b1022947733551fde4050ca6804",
+		},
 	}
 	for _, test := range tests {
-		var data []*fp.Element
-		for _, item := range test.input {
+		data := make([]*fp.Element, len(test.input))
+		for i, item := range test.input {
 			elem, _ := new(fp.Element).SetString(item)
-			data = append(data, elem)
+			data[i] = elem
 		}
 		want, _ := new(fp.Element).SetString(test.want)
 		got := PedersenArray(data...)
